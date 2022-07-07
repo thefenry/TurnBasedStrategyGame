@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PolygonPrototype_Global_Grid_06
-  m_Shader: {fileID: -6465566751694194690, guid: bf00925b2fbda49499ccc0de47e0d8ca,
+  m_Shader: {fileID: -6465566751694194690, guid: bddb59f74d601de4ea69374372142a6b,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -54,7 +54,7 @@ Material:
     m_Floats:
     - OverlayAmount: 0.5
     - _Falloff: 50
-    - _GridScale: 1
+    - _GridScale: 0.5
     - _OverlayAmount: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
