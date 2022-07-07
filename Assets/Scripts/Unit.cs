@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -7,7 +8,12 @@ public class Unit : MonoBehaviour
 
     private Vector3 _targetPosition;
 
-    private int _walkParameterHash = Animator.StringToHash("IsWalking");
+    private readonly int _walkParameterHash = Animator.StringToHash("IsWalking");
+
+    private void Awake()
+    {
+        _targetPosition = transform.position;
+    }
 
     private void Update()
     {
@@ -25,14 +31,9 @@ public class Unit : MonoBehaviour
         {
             unitAnimator.SetBool(_walkParameterHash, false);
         }
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Move(MouseWorld.GetPosition());
-        }
     }
 
-    private void Move(Vector3 targetPosition)
+    public void Move(Vector3 targetPosition)
     {
         _targetPosition = targetPosition;
     }
