@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -9,10 +8,17 @@ public class Unit : MonoBehaviour
     private Vector3 _targetPosition;
 
     private readonly int _walkParameterHash = Animator.StringToHash("IsWalking");
+    private GridPosition _gridPosition;
 
     private void Awake()
     {
         _targetPosition = transform.position;
+    }
+
+    private void Start()
+    {
+        _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.AddUnitAtGridPosition(_gridPosition, this);
     }
 
     private void Update()
@@ -31,6 +37,14 @@ public class Unit : MonoBehaviour
         {
             unitAnimator.SetBool(_walkParameterHash, false);
         }
+
+        var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        if (newGridPosition != _gridPosition)
+        {
+            LevelGrid.Instance.UnitMovedGridPosition(this, _gridPosition, newGridPosition);
+            _gridPosition = newGridPosition;
+        }
+
     }
 
     public void Move(Vector3 targetPosition)
