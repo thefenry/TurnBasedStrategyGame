@@ -366,6 +366,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   rotationSpeed: 100
+  zoomAmount: 1
+  zoomSpeed: 20
+  minZoomFollowOffset: 2
+  maxZoomFollowOffset: 12
+  cinemachineVirtualCamera: {fileID: 383872245}
 --- !u!1 &383872244
 GameObject:
   m_ObjectHideFlags: 0
