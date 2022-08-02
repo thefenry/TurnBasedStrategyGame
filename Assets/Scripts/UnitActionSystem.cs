@@ -39,7 +39,7 @@ public class UnitActionSystem : MonoBehaviour
 
         if (selectedUnit != null)
         {
-            selectedUnit.Move(MouseWorld.GetPosition());
+            selectedUnit.MoveAction.Move(MouseWorld.GetPosition());
         }
     }
 
