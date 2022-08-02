@@ -26,4 +26,9 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.UnitMovedGridPosition(this, _gridPosition, newGridPosition);
         _gridPosition = newGridPosition;
     }
+
+    public GridPosition GetCurrentGridPosition()
+    {
+        return _gridPosition;
+    }
 }
