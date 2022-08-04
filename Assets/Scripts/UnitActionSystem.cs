@@ -30,20 +30,26 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0)) { return; }
-
-        if (TryHandleUnitSelection())
+        if (Input.GetMouseButtonDown(0))
         {
-            return;
+            if (TryHandleUnitSelection())
+            {
+                return;
+            }
+
+            if (selectedUnit != null)
+            {
+                var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+                if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
+                {
+                    selectedUnit.MoveAction.Move(mouseGridPosition);
+                }
+            }
         }
 
-        if (selectedUnit != null)
+        if (Input.GetMouseButtonDown(1))
         {
-            var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-            if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
-            {
-                selectedUnit.MoveAction.Move(mouseGridPosition);
-            }
+            selectedUnit.SpinAction.Spin();
         }
     }
 

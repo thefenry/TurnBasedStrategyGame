@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -6,10 +5,12 @@ public class Unit : MonoBehaviour
     private GridPosition _gridPosition;
 
     public MoveAction MoveAction { get; private set; }
+    public SpinAction SpinAction { get; private set; }
 
     private void Awake()
     {
         MoveAction = GetComponent<MoveAction>();
+        SpinAction = GetComponent<SpinAction>();
     }
 
     private void Start()
