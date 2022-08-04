@@ -1,9 +1,9 @@
+using System;
 using UnityEngine;
 
 public class SpinAction : BaseAction
 {
     private const float SpinAmount = 360f;
-
     private float _totalSpinAmount;
 
     private void Update()
@@ -14,15 +14,17 @@ public class SpinAction : BaseAction
         transform.eulerAngles += new Vector3(0, spinAddAmount, 0);
 
         _totalSpinAmount += spinAddAmount;
-        
+
         if (!(_totalSpinAmount >= SpinAmount)) { return; }
-        
+
         IsActionActive = false;
-        _totalSpinAmount = 0;
+        OnActionComplete();
     }
 
-    public void Spin()
+    public void Spin(Action onActionComplete)
     {
+        OnActionComplete = onActionComplete;
         IsActionActive = true;
+        _totalSpinAmount = 0;
     }
 }

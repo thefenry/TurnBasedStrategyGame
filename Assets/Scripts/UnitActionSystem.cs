@@ -9,6 +9,8 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField] private LayerMask unitLayerMask;
     private Camera _camera;
 
+    private bool _isBusy;
+
     public event EventHandler OnSelectedUnitChanged;
 
     private void Awake()
@@ -30,6 +32,8 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (_isBusy) { return; }
+
         if (Input.GetMouseButtonDown(0))
         {
             if (TryHandleUnitSelection())
@@ -42,14 +46,16 @@ public class UnitActionSystem : MonoBehaviour
                 var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
                 if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
                 {
-                    selectedUnit.MoveAction.Move(mouseGridPosition);
+                    SetBusy();
+                    selectedUnit.MoveAction.Move(mouseGridPosition, ClearBusy);
                 }
             }
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            selectedUnit.SpinAction.Spin();
+            SetBusy();
+            selectedUnit.SpinAction.Spin(ClearBusy);
         }
     }
 
@@ -64,6 +70,11 @@ public class UnitActionSystem : MonoBehaviour
         return true;
 
     }
+
+    private void SetBusy() => _isBusy = true;
+
+    private void ClearBusy() => _isBusy = false;
+
 
     public void SetSelectedUnit(Unit unit)
     {
