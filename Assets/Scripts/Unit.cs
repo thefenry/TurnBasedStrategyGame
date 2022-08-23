@@ -7,10 +7,14 @@ public class Unit : MonoBehaviour
     public MoveAction MoveAction { get; private set; }
     public SpinAction SpinAction { get; private set; }
 
+    public BaseAction[] AvailableActions { get; private set; }
+
     private void Awake()
     {
         MoveAction = GetComponent<MoveAction>();
         SpinAction = GetComponent<SpinAction>();
+
+        AvailableActions = GetComponents<BaseAction>();
     }
 
     private void Start()
