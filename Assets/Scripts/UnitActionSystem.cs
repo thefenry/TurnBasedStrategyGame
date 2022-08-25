@@ -10,6 +10,7 @@ public class UnitActionSystem : MonoBehaviour
     private Camera _camera;
 
     private bool _isBusy;
+    private BaseAction _selectedAction;
 
     public event EventHandler OnSelectedUnitChanged;
 
@@ -28,39 +29,22 @@ public class UnitActionSystem : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
+        SetSelectedUnit(selectedUnit);
     }
 
     private void Update()
     {
         if (_isBusy) { return; }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (TryHandleUnitSelection())
-            {
-                return;
-            }
+        if (TryHandleUnitSelection()) { return; }
 
-            if (selectedUnit != null)
-            {
-                var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-                if (selectedUnit.MoveAction.IsValidActionGridPosition(mouseGridPosition))
-                {
-                    SetBusy();
-                    selectedUnit.MoveAction.Move(mouseGridPosition, ClearBusy);
-                }
-            }
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            SetBusy();
-            selectedUnit.SpinAction.Spin(ClearBusy);
-        }
+        HandleSelectedAction();
     }
 
     private bool TryHandleUnitSelection()
     {
+        if (!Input.GetMouseButtonDown(0)) { return false; }
+
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
 
         if (!Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, unitLayerMask)) { return false; }
@@ -68,7 +52,28 @@ public class UnitActionSystem : MonoBehaviour
         hitInfo.transform.TryGetComponent(out Unit unit);
         SetSelectedUnit(unit);
         return true;
+    }
 
+    private void HandleSelectedAction()
+    {
+        if (!Input.GetMouseButtonDown(0)) { return; }
+
+        var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+
+        switch (_selectedAction)
+        {
+            case MoveAction moveAction:
+                if (moveAction.IsValidActionGridPosition(mouseGridPosition))
+                {
+                    SetBusy();
+                    selectedUnit.MoveAction.Move(mouseGridPosition, ClearBusy);
+                }
+                break;
+            case SpinAction spinAction:
+                SetBusy();
+                spinAction.Spin(ClearBusy);
+                break;
+        }
     }
 
     private void SetBusy() => _isBusy = true;
@@ -79,7 +84,14 @@ public class UnitActionSystem : MonoBehaviour
     public void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
+        SetSelectedAction(unit.MoveAction);
+
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetSelectedAction(BaseAction baseAction)
+    {
+        _selectedAction = baseAction;
     }
 
     public Unit GetSelectedUnit()
