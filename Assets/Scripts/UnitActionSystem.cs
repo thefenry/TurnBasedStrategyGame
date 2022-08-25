@@ -56,6 +56,13 @@ public class UnitActionSystem : MonoBehaviour
         if (!Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, unitLayerMask)) { return false; }
 
         hitInfo.transform.TryGetComponent(out Unit unit);
+        
+        if (selectedUnit == unit)
+        {
+            //Unit is already selected
+            return false;
+        }
+
         SetSelectedUnit(unit);
         return true;
     }
@@ -65,7 +72,7 @@ public class UnitActionSystem : MonoBehaviour
         if (!Input.GetMouseButtonDown(0)) { return; }
 
         var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-        
+
         if (!_selectedAction.IsValidActionGridPosition(mouseGridPosition)) { return; }
 
         SetBusy();
