@@ -59,21 +59,11 @@ public class UnitActionSystem : MonoBehaviour
         if (!Input.GetMouseButtonDown(0)) { return; }
 
         var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+        
+        if (!_selectedAction.IsValidActionGridPosition(mouseGridPosition)) { return; }
 
-        switch (_selectedAction)
-        {
-            case MoveAction moveAction:
-                if (moveAction.IsValidActionGridPosition(mouseGridPosition))
-                {
-                    SetBusy();
-                    selectedUnit.MoveAction.Move(mouseGridPosition, ClearBusy);
-                }
-                break;
-            case SpinAction spinAction:
-                SetBusy();
-                spinAction.Spin(ClearBusy);
-                break;
-        }
+        SetBusy();
+        _selectedAction.TakeAction(mouseGridPosition, ClearBusy);
     }
 
     private void SetBusy() => _isBusy = true;
