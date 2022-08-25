@@ -90,8 +90,7 @@ public class UnitActionSystem : MonoBehaviour
         _selectedAction = baseAction;
     }
 
-    public Unit GetSelectedUnit()
-    {
-        return selectedUnit;
-    }
+    public Unit GetSelectedUnit() => selectedUnit;
+
+    public BaseAction GetSelectedAction() => _selectedAction;
 }
