@@ -14,6 +14,7 @@ public class UnitActionSystem : MonoBehaviour
     private BaseAction _selectedAction;
 
     public event EventHandler OnSelectedUnitChanged;
+    public event EventHandler OnSelectedActionChanged;
 
     private void Awake()
     {
@@ -95,6 +96,8 @@ public class UnitActionSystem : MonoBehaviour
     public void SetSelectedAction(BaseAction baseAction)
     {
         _selectedAction = baseAction;
+
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public Unit GetSelectedUnit() => selectedUnit;
