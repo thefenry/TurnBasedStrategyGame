@@ -9,6 +9,8 @@ public abstract class BaseAction : MonoBehaviour
 
     protected Action OnActionComplete;
 
+    [SerializeField, Tooltip("How many action points are needed to perform action")] private int actionCost = 1;
+
     protected virtual void Awake()
     {
         Unit = GetComponent<Unit>();
@@ -26,4 +28,8 @@ public abstract class BaseAction : MonoBehaviour
         return validGridPositionList.Contains(gridPosition);
     }
 
+    public virtual int GetActionPointCost()
+    {
+        return actionCost;
+    }
 }

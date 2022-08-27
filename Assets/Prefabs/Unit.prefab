@@ -171,6 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551ce1847048608458764dbbf2c7852c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionCost: 2
   stoppingDistance: 0.1
   maxMoveDistance: 4
   unitAnimator: {fileID: 6484229174666445567}
@@ -186,6 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a7f7c787edd9d843ba9a34e0d18dc19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionCost: 1
 --- !u!1001 &6388586733290842194
 PrefabInstance:
   m_ObjectHideFlags: 0
