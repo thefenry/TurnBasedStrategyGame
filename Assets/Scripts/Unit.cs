@@ -1,15 +1,20 @@
+using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
     private GridPosition _gridPosition;
 
-    private int _actionPoints = 2;
+    [SerializeField] private int maxActionPoints = 2;
+    private int _actionPointsRemaining;
 
     public MoveAction MoveAction { get; private set; }
     public SpinAction SpinAction { get; private set; }
 
     public BaseAction[] AvailableActions { get; private set; }
+
+    public static event EventHandler OnAnyActionPointsChanged;
+
 
     private void Awake()
     {
@@ -17,14 +22,18 @@ public class Unit : MonoBehaviour
         SpinAction = GetComponent<SpinAction>();
 
         AvailableActions = GetComponents<BaseAction>();
+
+        _actionPointsRemaining = maxActionPoints;
     }
 
     private void Start()
     {
         _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtGridPosition(_gridPosition, this);
-    }
 
+        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+    }
+    
     private void Update()
     {
         var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -32,6 +41,13 @@ public class Unit : MonoBehaviour
 
         LevelGrid.Instance.UnitMovedGridPosition(this, _gridPosition, newGridPosition);
         _gridPosition = newGridPosition;
+    }
+
+    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+    {
+        _actionPointsRemaining = maxActionPoints;
+
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public GridPosition GetCurrentGridPosition()
@@ -52,16 +68,18 @@ public class Unit : MonoBehaviour
 
     private bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
-        return baseAction.GetActionPointCost() <= _actionPoints;
+        return baseAction.GetActionPointCost() <= _actionPointsRemaining;
     }
 
     private void SpendActionPoints(int amount)
     {
-        _actionPoints -= amount;
+        _actionPointsRemaining -= amount;
+
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public int GetActionPoints()
     {
-        return _actionPoints;
+        return _actionPointsRemaining;
     }
 }
