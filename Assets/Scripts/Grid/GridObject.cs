@@ -33,4 +33,9 @@ public class GridObject
 
         return $"{_gridPosition}\n{unitString}";
     }
+
+    public bool HasAnyUnit()
+    {
+        return _unitList.Any();
+    }
 }

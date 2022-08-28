@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UnitActionSystem : MonoBehaviour
 {
@@ -9,7 +10,13 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField] private LayerMask unitLayerMask;
     private Camera _camera;
 
+    private bool _isBusy;
+    private BaseAction _selectedAction;
+
     public event EventHandler OnSelectedUnitChanged;
+    public event EventHandler OnSelectedActionChanged;
+    public event EventHandler<bool> OnActionBusyChanged;
+    public event EventHandler OnActionStarted;
 
     private void Awake()
     {
@@ -26,43 +33,87 @@ public class UnitActionSystem : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
+        SetSelectedUnit(selectedUnit);
     }
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0)) { return; }
+        if (_isBusy) { return; }
 
-        if (TryHandleUnitSelection())
+        if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
 
-        if (selectedUnit != null)
-        {
-            selectedUnit.Move(MouseWorld.GetPosition());
-        }
+        if (TryHandleUnitSelection()) { return; }
+
+        HandleSelectedAction();
     }
 
     private bool TryHandleUnitSelection()
     {
+        if (!Input.GetMouseButtonDown(0)) { return false; }
+
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
 
         if (!Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, unitLayerMask)) { return false; }
 
         hitInfo.transform.TryGetComponent(out Unit unit);
+        
+        if (selectedUnit == unit)
+        {
+            //Unit is already selected
+            return false;
+        }
+
         SetSelectedUnit(unit);
         return true;
+    }
 
+    private void HandleSelectedAction()
+    {
+        if (!Input.GetMouseButtonDown(0)) { return; }
+
+        var mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+
+        if (!_selectedAction.IsValidActionGridPosition(mouseGridPosition)) { return; }
+
+        if (!selectedUnit.TrySpendActionPointsToTakeAction(_selectedAction)) { return; }
+
+        SetBusy();
+        _selectedAction.TakeAction(mouseGridPosition, ClearBusy);
+
+        OnActionStarted?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SetBusy()
+    {
+        _isBusy = true;
+        OnActionBusyChanged?.Invoke(this, _isBusy);
+    }
+
+    private void ClearBusy()
+    {
+        _isBusy = false;
+        OnActionBusyChanged?.Invoke(this, _isBusy);
     }
 
     public void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
+        SetSelectedAction(unit.MoveAction);
+
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public Unit GetSelectedUnit()
+    public void SetSelectedAction(BaseAction baseAction)
     {
-        return selectedUnit;
+        _selectedAction = baseAction;
+
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public Unit GetSelectedUnit() => selectedUnit;
+
+    public BaseAction GetSelectedAction() => _selectedAction;
 }
