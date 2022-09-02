@@ -3,9 +3,13 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    private GridPosition _gridPosition;
 
     [SerializeField] private int maxActionPoints = 2;
+
+    [SerializeField] private bool isEnemy;
+
+    private GridPosition _gridPosition;
+
     private int _actionPointsRemaining;
 
     public MoveAction MoveAction { get; private set; }
@@ -33,7 +37,7 @@ public class Unit : MonoBehaviour
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
     }
-    
+
     private void Update()
     {
         var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -45,6 +49,9 @@ public class Unit : MonoBehaviour
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        if ((!IsEnemy() || TurnSystem.Instance.IsPlayerTurn()) &&
+            (IsEnemy() || !TurnSystem.Instance.IsPlayerTurn())) { return; }
+
         _actionPointsRemaining = maxActionPoints;
 
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
@@ -81,5 +88,10 @@ public class Unit : MonoBehaviour
     public int GetActionPoints()
     {
         return _actionPointsRemaining;
+    }
+
+    public bool IsEnemy()
+    {
+        return isEnemy;
     }
 }
