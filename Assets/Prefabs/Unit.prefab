@@ -111,6 +111,7 @@ GameObject:
   - component: {fileID: 8205145265401391909}
   - component: {fileID: 3485028958598693707}
   - component: {fileID: 6928709560507711359}
+  - component: {fileID: 1731292280663335030}
   m_Layer: 7
   m_Name: Unit
   m_TagString: Untagged
@@ -203,6 +204,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bfd2876d966f94f8601f52cbb6aadd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionCost: 1
+  maxShootDistance: 7
+--- !u!114 &1731292280663335030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6388586733149884053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11594a68b91990746ac77d95528926e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 6484229174666445567}
 --- !u!1001 &6388586733290842194
 PrefabInstance:
   m_ObjectHideFlags: 0
