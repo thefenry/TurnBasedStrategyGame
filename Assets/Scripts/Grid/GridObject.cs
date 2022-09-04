@@ -38,4 +38,9 @@ public class GridObject
     {
         return _unitList.Any();
     }
+
+    public Unit GetUnit()
+    {
+        return _unitList.FirstOrDefault();
+    }
 }

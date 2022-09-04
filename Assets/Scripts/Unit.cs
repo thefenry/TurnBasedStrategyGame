@@ -62,15 +62,18 @@ public class Unit : MonoBehaviour
         return _gridPosition;
     }
 
+    public Vector3 GetWorldPosition()
+    {
+        return transform.position;
+    }
+
     public bool TrySpendActionPointsToTakeAction(BaseAction baseAction)
     {
-        if (CanSpendActionPointsToTakeAction(baseAction))
-        {
-            SpendActionPoints(baseAction.GetActionPointCost());
-            return true;
-        }
+        if (!CanSpendActionPointsToTakeAction(baseAction)) { return false; }
 
-        return false;
+        SpendActionPoints(baseAction.GetActionPointCost());
+        return true;
+
     }
 
     private bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
@@ -93,5 +96,10 @@ public class Unit : MonoBehaviour
     public bool IsEnemy()
     {
         return isEnemy;
+    }
+
+    public void TakeDamage()
+    {
+        Debug.Log($"{transform} damaged!");
     }
 }
