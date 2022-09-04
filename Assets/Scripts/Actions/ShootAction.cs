@@ -20,6 +20,9 @@ public class ShootAction : BaseAction
         CoolOff
     }
 
+    public event EventHandler OnShoot;
+
+
     private void Update()
     {
         if (!IsActionActive) { return; }
@@ -58,6 +61,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        OnShoot?.Invoke(this, EventArgs.Empty);
         _targetUnit.TakeDamage();
     }
 
