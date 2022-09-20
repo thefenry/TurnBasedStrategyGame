@@ -1,9 +1,12 @@
 using System;
 using UnityEngine;
+using static ShootAction;
 
 public class UnitAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform bulletProjectilePrefab;
+    [SerializeField] private Transform projectileSpawnPosition;
 
     private static readonly int WalkParameterHash = Animator.StringToHash("IsWalking");
     private static readonly int ShootParameterHash = Animator.StringToHash("Shoot");
@@ -40,8 +43,20 @@ public class UnitAnimator : MonoBehaviour
         animator.SetBool(WalkParameterHash, false);
     }
 
-    private void ShootAction_OnShoot(object sender, EventArgs e)
+    private void ShootAction_OnShoot(object sender, OnShootEventArgs e)
     {
         animator.SetTrigger(ShootParameterHash);
+
+        Transform bulletProjectileTransform =
+            Instantiate(bulletProjectilePrefab, projectileSpawnPosition.position, Quaternion.identity);
+
+        BulletProjectile bulletProjectile = bulletProjectileTransform.GetComponent<BulletProjectile>();
+
+        Vector3 targetUnitShootAtPosition = e.TargetUnit.GetWorldPosition();
+
+        targetUnitShootAtPosition.y = projectileSpawnPosition.position.y;
+
+        bulletProjectile.Setup(targetUnitShootAtPosition);
+
     }
 }
