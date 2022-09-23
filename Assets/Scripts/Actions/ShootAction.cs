@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
-    [SerializeField]
-    private int maxShootDistance = 7;
+    [SerializeField] private int maxShootDistance = 7;
+    [SerializeField] private int damageAmount = 40;
 
     private State _currentState;
     private float _stateTimer;
@@ -67,7 +67,7 @@ public class ShootAction : BaseAction
     private void Shoot()
     {
         OnShoot?.Invoke(this, new OnShootEventArgs { TargetUnit = _targetUnit, ShootingUnit = Unit });
-        _targetUnit.TakeDamage();
+        _targetUnit.TakeDamage(damageAmount);
     }
 
     private void NextState()
