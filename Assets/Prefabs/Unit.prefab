@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 6928709560507711359}
   - component: {fileID: 1731292280663335030}
   - component: {fileID: 6136264873976845115}
+  - component: {fileID: -5729176757340153420}
   m_Layer: 7
   m_Name: Unit
   m_TagString: Untagged
@@ -237,6 +238,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionCost: 1
   maxShootDistance: 7
+  damageAmount: 40
 --- !u!114 &1731292280663335030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,6 +267,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79296d0630ef7fc47a12120a6f603343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 100
+--- !u!114 &-5729176757340153420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6388586733149884053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6973ce4066eeda04198007e541977c14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ragdollPrefab: {fileID: 6388586733149884058, guid: 7bd0c1b9ba42e7e4fa03342a9fb46401,
+    type: 3}
+  originalRootBone: {fileID: 6393269880600885245}
 --- !u!1001 &6388586733290842194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -681,6 +699,12 @@ Transform:
 --- !u!4 &6393026692960756711 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4580766925885248, guid: 2f3e27eecb190e44a9af50723c394274,
+    type: 3}
+  m_PrefabInstance: {fileID: 6388586733598846119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6393269880600885245 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4966341056781146, guid: 2f3e27eecb190e44a9af50723c394274,
     type: 3}
   m_PrefabInstance: {fileID: 6388586733598846119}
   m_PrefabAsset: {fileID: 0}
