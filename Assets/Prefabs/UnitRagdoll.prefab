@@ -110,7 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ragdollRootBone: {fileID: 6393269880600885245}
   explosionPosition: {fileID: 6860791151485980921}
-  explosionForce: 700
+  explosionForce: 1100
   explosionRadius: 20
 --- !u!1001 &6388586733290842194
 PrefabInstance:
