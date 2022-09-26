@@ -9,7 +9,9 @@ public class LevelGrid : MonoBehaviour
     [SerializeField] private Transform gridDebugObjectPrefab;
 
     private GridSystem _gridSystem;
-    
+
+    public event EventHandler OnAnyUnitMovedGridPostion;
+
     private void Awake()
     {
         if (Instance != null)
@@ -27,8 +29,8 @@ public class LevelGrid : MonoBehaviour
 
     public void AddUnitAtGridPosition(GridPosition gridPosition, Unit unit)
     {
-       var gridObject = _gridSystem.GetGridObject(gridPosition);
-       gridObject.AddUnit(unit);
+        var gridObject = _gridSystem.GetGridObject(gridPosition);
+        gridObject.AddUnit(unit);
     }
 
     public List<Unit> GetUnitListAtGridPosition(GridPosition gridPosition)
@@ -47,14 +49,16 @@ public class LevelGrid : MonoBehaviour
     {
         RemoveUnitAtGridPosition(fromGridPosition, unit);
         AddUnitAtGridPosition(toGridPosition, unit);
+
+        OnAnyUnitMovedGridPostion?.Invoke(this, EventArgs.Empty);
     }
 
     public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
     {
         var gridObject = _gridSystem.GetGridObject(gridPosition);
         return gridObject.HasAnyUnit();
-    } 
-    
+    }
+
     public Unit GetUnitAtGridPosition(GridPosition gridPosition)
     {
         var gridObject = _gridSystem.GetGridObject(gridPosition);
@@ -62,7 +66,7 @@ public class LevelGrid : MonoBehaviour
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition) => _gridSystem.GetGridPosition(worldPosition);
-    
+
     public Vector3 GetWorldPosition(GridPosition gridPosition) => _gridSystem.GetWorldPosition(gridPosition);
 
     public bool IsValidGridPosition(GridPosition gridPosition) => _gridSystem.IsValidGridPosition(gridPosition);
