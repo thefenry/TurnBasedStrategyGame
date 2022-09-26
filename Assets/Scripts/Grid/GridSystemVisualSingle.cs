@@ -9,9 +9,10 @@ public class GridSystemVisualSingle : MonoBehaviour
         _meshRenderer = GetComponentInChildren<MeshRenderer>();
     }
 
-    public void Show()
+    public void Show(Material material)
     {
         _meshRenderer.enabled = true;
+        _meshRenderer.material = material;
     }
 
     public void Hide()

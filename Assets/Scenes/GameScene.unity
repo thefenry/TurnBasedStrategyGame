@@ -224,6 +224,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSystemVisualSinglePrefab: {fileID: 8202716141945753461, guid: aea22a5490ef36c448587621fbdb2015,
     type: 3}
+  gridVisualTypeMaterials:
+  - gridVisualColor: 0
+    material: {fileID: 2100000, guid: 7ff31624acfce85479bcb9d444309d1a, type: 2}
+  - gridVisualColor: 1
+    material: {fileID: 2100000, guid: 5141bb7c86aed8f408eb6be4b49758fb, type: 2}
+  - gridVisualColor: 2
+    material: {fileID: 2100000, guid: ca1b4031135c82047839adeb10f7b631, type: 2}
+  - gridVisualColor: 4
+    material: {fileID: 2100000, guid: 8b50a9bcdb17ec44a965b35439940766, type: 2}
+  - gridVisualColor: 3
+    material: {fileID: 2100000, guid: 356134c78a56c2f4a841807552ab9e6f, type: 2}
 --- !u!1 &170547805
 GameObject:
   m_ObjectHideFlags: 0
