@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class BaseAction : MonoBehaviour
@@ -50,6 +51,24 @@ public abstract class BaseAction : MonoBehaviour
         OnActionComplete();
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
     }
+
+    public EnemyAIAction GetBestEnemyAIAction()
+    {
+        List<EnemyAIAction> enemyAIActions = new();
+
+        var validActionGridPositions = GetValidActionGridPositions();
+
+        foreach (var gridPosition in validActionGridPositions)
+        {
+            var enemyAIAction = GetEnemyAIAction(gridPosition);
+            enemyAIActions.Add(enemyAIAction);
+        }
+
+        enemyAIActions.Sort((EnemyAIAction a, EnemyAIAction b) => b.ActionValue - a.ActionValue);
+        return enemyAIActions.FirstOrDefault();
+    }
+
+    public abstract EnemyAIAction GetEnemyAIAction(GridPosition gridPosition);
 
     public Unit GetUnit() => Unit;
 }

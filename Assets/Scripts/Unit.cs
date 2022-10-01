@@ -15,6 +15,7 @@ public class Unit : MonoBehaviour
 
     public MoveAction MoveAction { get; private set; }
     public SpinAction SpinAction { get; private set; }
+    public ShootAction ShootAction { get; private set; }
 
     public BaseAction[] AvailableActions { get; private set; }
 
@@ -26,6 +27,7 @@ public class Unit : MonoBehaviour
     {
         MoveAction = GetComponent<MoveAction>();
         SpinAction = GetComponent<SpinAction>();
+        ShootAction = GetComponent<ShootAction>();
 
         AvailableActions = GetComponents<BaseAction>();
 
@@ -83,7 +85,7 @@ public class Unit : MonoBehaviour
 
     }
 
-    private bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
+    public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
         return baseAction.GetActionPointCost() <= _actionPointsRemaining;
     }

@@ -38,4 +38,13 @@ public class SpinAction : BaseAction
 
         return new List<GridPosition> { currentGridPosition };
     }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        return new EnemyAIAction
+        {
+            GridPosition = gridPosition,
+            ActionValue = 1 //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
+        };
+    }
 }
