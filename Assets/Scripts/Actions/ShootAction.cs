@@ -155,10 +155,13 @@ public class ShootAction : BaseAction
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
+        Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
+        float targetCurrentHealth = targetUnit.GetCurrentHealth;
+
         return new EnemyAIAction
         {
             GridPosition = gridPosition,
-            ActionValue = 100 //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
+            ActionValue = 100 + Mathf.RoundToInt((1- targetCurrentHealth) * 100) //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
         };
     }
 
