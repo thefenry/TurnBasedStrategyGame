@@ -40,6 +40,8 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (_isBusy) { return; }
 
+        if (!TurnSystem.Instance.IsPlayerTurn()) { return; }
+
         if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
@@ -60,9 +62,9 @@ public class UnitActionSystem : MonoBehaviour
 
         hitInfo.transform.TryGetComponent(out Unit unit);
         
-        if (selectedUnit == unit)
+        if (selectedUnit == unit || unit.IsEnemy())
         {
-            //Unit is already selected
+            //Unit is already selected or is an enemy
             return false;
         }
 

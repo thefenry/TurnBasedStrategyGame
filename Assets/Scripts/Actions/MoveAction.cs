@@ -6,11 +6,11 @@ public class MoveAction : BaseAction
 {
     [SerializeField] private float stoppingDistance = .1f;
     [SerializeField] private int maxMoveDistance = 4;
-    [SerializeField] private Animator unitAnimator;
 
     private Vector3 _targetPosition;
-
-    private readonly int _walkParameterHash = Animator.StringToHash("IsWalking");
+    
+    public event EventHandler OnStartMoving;
+    public event EventHandler OnStopMoving;
 
     protected override void Awake()
     {
@@ -27,14 +27,11 @@ public class MoveAction : BaseAction
         {
             float moveSpeed = 4f;
             transform.position += moveDirection * (Time.deltaTime * moveSpeed);
-
-            unitAnimator.SetBool(_walkParameterHash, true);
         }
         else
         {
-            unitAnimator.SetBool(_walkParameterHash, false);
-            IsActionActive = false;
-            OnActionComplete();
+            OnStopMoving?.Invoke(this, EventArgs.Empty);
+            ActionComplete();
         }
 
         float rotationSpeed = 10f;
@@ -44,14 +41,14 @@ public class MoveAction : BaseAction
     public override void TakeAction(GridPosition targetPosition, Action onActionComplete)
     {
         _targetPosition = LevelGrid.Instance.GetWorldPosition(targetPosition);
-        IsActionActive = true;
-        OnActionComplete = onActionComplete;
+
+        OnStartMoving?.Invoke(this, EventArgs.Empty);
+        ActionStart(onActionComplete);
     }
-    
-    public override List<GridPosition> GetValidActionGridPositions()
+
+   public override List<GridPosition> GetValidActionGridPositions()
     {
         var validGridPositions = new List<GridPosition>();
-
         var currentGridPosition = Unit.GetCurrentGridPosition();
 
         for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
@@ -71,6 +68,17 @@ public class MoveAction : BaseAction
         }
 
         return validGridPositions;
+    }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        ShootAction shootAction = Unit.ShootAction;
+        int targetCountAtGridPosition = shootAction.GetTargetCountAtPosition(gridPosition);
+        return new EnemyAIAction
+        {
+            GridPosition = gridPosition,
+            ActionValue = targetCountAtGridPosition * 10 //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
+        };
     }
 
     public override string GetActionName()

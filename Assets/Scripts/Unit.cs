@@ -3,26 +3,35 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    private GridPosition _gridPosition;
 
     [SerializeField] private int maxActionPoints = 2;
+
+    [SerializeField] private bool isEnemy;
+
+    private GridPosition _gridPosition;
+
     private int _actionPointsRemaining;
+    private HealthSystem _healthSystem;
 
     public MoveAction MoveAction { get; private set; }
     public SpinAction SpinAction { get; private set; }
+    public ShootAction ShootAction { get; private set; }
 
     public BaseAction[] AvailableActions { get; private set; }
 
     public static event EventHandler OnAnyActionPointsChanged;
-
+    public static event EventHandler OnAnySpawned;
+    public static event EventHandler OnAnyUnitDead;
 
     private void Awake()
     {
         MoveAction = GetComponent<MoveAction>();
         SpinAction = GetComponent<SpinAction>();
+        ShootAction = GetComponent<ShootAction>();
 
         AvailableActions = GetComponents<BaseAction>();
 
+        _healthSystem = GetComponent<HealthSystem>();
         _actionPointsRemaining = maxActionPoints;
     }
 
@@ -32,19 +41,26 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.AddUnitAtGridPosition(_gridPosition, this);
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        _healthSystem.OnDeath += HealthSystem_OnDeath;
+
+        OnAnySpawned?.Invoke(this, EventArgs.Empty);
     }
-    
+
     private void Update()
     {
         var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition == _gridPosition) { return; }
 
-        LevelGrid.Instance.UnitMovedGridPosition(this, _gridPosition, newGridPosition);
+        var previousGridPosition = _gridPosition;
         _gridPosition = newGridPosition;
+        LevelGrid.Instance.UnitMovedGridPosition(this, previousGridPosition, newGridPosition);
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        if ((!IsEnemy() || TurnSystem.Instance.IsPlayerTurn()) &&
+            (IsEnemy() || !TurnSystem.Instance.IsPlayerTurn())) { return; }
+
         _actionPointsRemaining = maxActionPoints;
 
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
@@ -55,18 +71,21 @@ public class Unit : MonoBehaviour
         return _gridPosition;
     }
 
-    public bool TrySpendActionPointsToTakeAction(BaseAction baseAction)
+    public Vector3 GetWorldPosition()
     {
-        if (CanSpendActionPointsToTakeAction(baseAction))
-        {
-            SpendActionPoints(baseAction.GetActionPointCost());
-            return true;
-        }
-
-        return false;
+        return transform.position;
     }
 
-    private bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
+    public bool TrySpendActionPointsToTakeAction(BaseAction baseAction)
+    {
+        if (!CanSpendActionPointsToTakeAction(baseAction)) { return false; }
+
+        SpendActionPoints(baseAction.GetActionPointCost());
+        return true;
+
+    }
+
+    public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
         return baseAction.GetActionPointCost() <= _actionPointsRemaining;
     }
@@ -82,4 +101,24 @@ public class Unit : MonoBehaviour
     {
         return _actionPointsRemaining;
     }
+
+    public bool IsEnemy()
+    {
+        return isEnemy;
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        _healthSystem.TakeDamage(damageAmount);
+    }
+
+    private void HealthSystem_OnDeath(object sender, EventArgs e)
+    {
+        LevelGrid.Instance.RemoveUnitAtGridPosition(_gridPosition, this);
+        Destroy(gameObject);
+
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    public float GetCurrentHealth => _healthSystem.GetNormalizedHealth();
 }

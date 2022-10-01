@@ -18,15 +18,13 @@ public class SpinAction : BaseAction
 
         if (!(_totalSpinAmount >= SpinAmount)) { return; }
 
-        IsActionActive = false;
-        OnActionComplete();
+        ActionComplete();
     }
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        OnActionComplete = onActionComplete;
-        IsActionActive = true;
         _totalSpinAmount = 0;
+        ActionStart(onActionComplete);
     }
 
     public override string GetActionName()
@@ -39,5 +37,14 @@ public class SpinAction : BaseAction
         var currentGridPosition = Unit.GetCurrentGridPosition();
 
         return new List<GridPosition> { currentGridPosition };
+    }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        return new EnemyAIAction
+        {
+            GridPosition = gridPosition,
+            ActionValue = 1 //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
+        };
     }
 }
