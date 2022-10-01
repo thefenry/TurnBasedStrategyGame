@@ -19,7 +19,8 @@ public class Unit : MonoBehaviour
     public BaseAction[] AvailableActions { get; private set; }
 
     public static event EventHandler OnAnyActionPointsChanged;
-
+    public static event EventHandler OnAnySpawned;
+    public static event EventHandler OnAnyUnitDead;
 
     private void Awake()
     {
@@ -39,8 +40,10 @@ public class Unit : MonoBehaviour
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         _healthSystem.OnDeath += HealthSystem_OnDeath;
+
+        OnAnySpawned?.Invoke(this, EventArgs.Empty);
     }
-    
+
     private void Update()
     {
         var newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -111,6 +114,8 @@ public class Unit : MonoBehaviour
     {
         LevelGrid.Instance.RemoveUnitAtGridPosition(_gridPosition, this);
         Destroy(gameObject);
+
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 
 }
