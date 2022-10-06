@@ -9,9 +9,9 @@ public class Pathfinding : MonoBehaviour
 
     [SerializeField] private Transform gridDebugObjectPrefab;
 
-    private int width;
-    private int height;
-    private float cellSize;
+    private int _width;
+    private int _height;
+    private float _cellSize;
     private GridSystem<PathNode> _gridSystem;
 
     public static Pathfinding Instance { get; set; }
@@ -26,13 +26,19 @@ public class Pathfinding : MonoBehaviour
         }
 
         Instance = this;
+    }
 
-        _gridSystem = new GridSystem<PathNode>(10, 10, 2f,
-             (GridSystem<PathNode> gridObject, GridPosition gridPosition) => new PathNode(gridPosition));
+    public void Setup(int width, int height, float cellSize)
+    {
+        _width = width;
+        _height = height;
+        _cellSize = cellSize;
+
+        _gridSystem = new GridSystem<PathNode>(_width, _height, _cellSize,
+            (GridSystem<PathNode> gridObject, GridPosition gridPosition) => new PathNode(gridPosition));
 
         _gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
-
 
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
     {
