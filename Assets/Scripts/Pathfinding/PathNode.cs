@@ -3,7 +3,7 @@ public class PathNode
     private readonly GridPosition _gridPosition;
 
     private PathNode _cameFromPathNode;
-
+    
     public PathNode(GridPosition gridPosition)
     {
         _gridPosition = gridPosition;
@@ -26,6 +26,8 @@ public class PathNode
     private int _fCost;
 
     public int FCost => _fCost;
+
+    public bool IsWalkable { get; set; } = true;
 
     public GridPosition GridPosition => _gridPosition;
 

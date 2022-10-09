@@ -8,6 +8,7 @@ public class Pathfinding : MonoBehaviour
     private const int MoveDiagonalCost = 14;
 
     [SerializeField] private Transform gridDebugObjectPrefab;
+    [SerializeField] private LayerMask obstacleLayerMask;
 
     private int _width;
     private int _height;
@@ -38,6 +39,21 @@ public class Pathfinding : MonoBehaviour
             (GridSystem<PathNode> gridObject, GridPosition gridPosition) => new PathNode(gridPosition));
 
         _gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < height; z++)
+            {
+                GridPosition gridPosition = new GridPosition(x, z);
+                Vector3 worldPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+                float raycastOffsetDistance = 5f;
+                if (Physics.Raycast(worldPosition + Vector3.down * raycastOffsetDistance,
+                        Vector3.up, raycastOffsetDistance * 2, obstacleLayerMask))
+                {
+                    GetNode(x, z).IsWalkable = false;
+                }
+            }
+        }
     }
 
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
@@ -85,6 +101,12 @@ public class Pathfinding : MonoBehaviour
             {
                 if (closedList.Contains(neighborNode))
                 {
+                    continue;
+                }
+
+                if (!neighborNode.IsWalkable)
+                {
+                    closedList.Add(neighborNode);
                     continue;
                 }
 
