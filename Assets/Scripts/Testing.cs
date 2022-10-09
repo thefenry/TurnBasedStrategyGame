@@ -12,18 +12,29 @@ public class Testing : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-            GridPosition startGridPosition = new GridPosition(0, 0);
+            //ShowNavigationPath();
+        }
+    }
 
-            var gridPositions = Pathfinding.Instance.FindPath(startGridPosition, mouseGridPosition);
+    /// <summary>
+    /// Shows a navigation path using the pathfinding algorithm
+    /// </summary>
+    private static void ShowNavigationPath()
+    {
+        GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+        GridPosition startGridPosition = new GridPosition(0, 0);
 
-            if (gridPositions == null) { return; }
+        var gridPositions = Pathfinding.Instance.FindPath(startGridPosition, mouseGridPosition);
 
-            for (int i = 0; i < gridPositions.Count - 1; i++)
-            {
-                Debug.DrawLine(LevelGrid.Instance.GetWorldPosition(gridPositions[i]),
-                    LevelGrid.Instance.GetWorldPosition(gridPositions[i + 1]), Color.magenta, 10);
-            }
+        if (gridPositions == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < gridPositions.Count - 1; i++)
+        {
+            Debug.DrawLine(LevelGrid.Instance.GetWorldPosition(gridPositions[i]),
+                LevelGrid.Instance.GetWorldPosition(gridPositions[i + 1]), Color.magenta, 10);
         }
     }
 }
