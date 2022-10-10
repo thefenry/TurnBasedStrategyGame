@@ -35,8 +35,8 @@ public class Pathfinding : MonoBehaviour
         _height = height;
         _cellSize = cellSize;
 
-        _gridSystem = new GridSystem<PathNode>(_width, _height, _cellSize,
-            (GridSystem<PathNode> gridObject, GridPosition gridPosition) => new PathNode(gridPosition));
+        _gridSystem = new GridSystem<PathNode>(width, height, cellSize,
+            (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
 
         // Shows the debug tiles 
         //_gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
@@ -49,7 +49,7 @@ public class Pathfinding : MonoBehaviour
                 Vector3 worldPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
                 float raycastOffsetDistance = 5f;
                 if (Physics.Raycast(worldPosition + Vector3.down * raycastOffsetDistance,
-                        Vector3.up, raycastOffsetDistance * 2, obstacleLayerMask))
+                    Vector3.up, raycastOffsetDistance * 2, obstacleLayerMask))
                 {
                     GetNode(x, z).IsWalkable = false;
                 }
@@ -57,7 +57,7 @@ public class Pathfinding : MonoBehaviour
         }
     }
 
-    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLength)
     {
         List<PathNode> openList = new List<PathNode>();
         List<PathNode> closedList = new List<PathNode>();
@@ -65,7 +65,6 @@ public class Pathfinding : MonoBehaviour
         PathNode startNode = _gridSystem.GetGridObject(startGridPosition);
         PathNode endNode = _gridSystem.GetGridObject(endGridPosition);
         openList.Add(startNode);
-
 
         for (int x = 0; x < _gridSystem.GetWidth(); x++)
         {
@@ -91,7 +90,8 @@ public class Pathfinding : MonoBehaviour
 
             if (currentNode == endNode)
             {
-                //Reached final node
+                // Reached final node
+                pathLength = endNode.FCost;
                 return CalculatePath(endNode);
             }
 
@@ -114,21 +114,23 @@ public class Pathfinding : MonoBehaviour
                 int tentativeGCost =
                     currentNode.GCost + CalculateDistance(currentNode.GridPosition, neighborNode.GridPosition);
 
-                if (tentativeGCost >= neighborNode.GCost) { continue; }
-
-                neighborNode.CameFromPathNode = currentNode;
-                neighborNode.GCost = tentativeGCost;
-                neighborNode.HCost = CalculateDistance(startGridPosition, endGridPosition);
-                neighborNode.CalculateFCost();
-
-                if (!openList.Contains(neighborNode))
+                if (tentativeGCost < neighborNode.GCost)
                 {
-                    openList.Add(neighborNode);
+                    neighborNode.CameFromPathNode = currentNode;
+                    neighborNode.GCost = tentativeGCost;
+                    neighborNode.HCost = CalculateDistance(neighborNode.GridPosition, endGridPosition);
+                    neighborNode.CalculateFCost();
+
+                    if (!openList.Contains(neighborNode))
+                    {
+                        openList.Add(neighborNode);
+                    }
                 }
             }
         }
 
         // No path found
+        pathLength = 0;
         return null;
     }
 
@@ -161,12 +163,10 @@ public class Pathfinding : MonoBehaviour
 
         GridPosition gridPosition = currentNode.GridPosition;
 
-
-        if (gridPosition.X - 1 > 0)
+        if (gridPosition.X - 1 >= 0)
         {
             // Left
             neighborList.Add(GetNode(gridPosition.X - 1, gridPosition.Z + 0));
-
             if (gridPosition.Z - 1 >= 0)
             {
                 // Left Down
@@ -184,13 +184,11 @@ public class Pathfinding : MonoBehaviour
         {
             // Right
             neighborList.Add(GetNode(gridPosition.X + 1, gridPosition.Z + 0));
-
             if (gridPosition.Z - 1 >= 0)
             {
                 // Right Down
                 neighborList.Add(GetNode(gridPosition.X + 1, gridPosition.Z - 1));
             }
-
             if (gridPosition.Z + 1 < _gridSystem.GetHeight())
             {
                 // Right Up
@@ -203,7 +201,6 @@ public class Pathfinding : MonoBehaviour
             // Down
             neighborList.Add(GetNode(gridPosition.X + 0, gridPosition.Z - 1));
         }
-
         if (gridPosition.Z + 1 < _gridSystem.GetHeight())
         {
             // Up
@@ -220,21 +217,34 @@ public class Pathfinding : MonoBehaviour
 
     private List<GridPosition> CalculatePath(PathNode endNode)
     {
-        //List<PathNode> pathNodes = new List<PathNode>();
-        List<GridPosition> gridPositions = new List<GridPosition>();
-        //pathNodes.Add(endNode);
+        List<PathNode> pathNodes = new List<PathNode> { endNode };
+
         PathNode currentNode = endNode;
-        gridPositions.Add(endNode.GridPosition);
         while (currentNode.CameFromPathNode != null)
         {
-            //pathNodes.Add(currentNode.CameFromPathNode);
+            pathNodes.Add(currentNode.CameFromPathNode);
             currentNode = currentNode.CameFromPathNode;
-            gridPositions.Add(currentNode.GridPosition);
         }
 
-        //pathNodes.Reverse();
-        gridPositions.Reverse();
-        return gridPositions;
+        pathNodes.Reverse();
 
+        return pathNodes.Select(pathNode => pathNode.GridPosition).ToList();
     }
+
+    public bool IsWalkableGridPosition(GridPosition gridPosition)
+    {
+        return _gridSystem.GetGridObject(gridPosition).IsWalkable;
+    }
+
+    public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        return FindPath(startGridPosition, endGridPosition, out int pathLength) != null;
+    }
+
+    public int GetPathLength(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        FindPath(startGridPosition, endGridPosition, out int pathLength);
+        return pathLength;
+    }
+
 }

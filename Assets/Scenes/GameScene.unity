@@ -876,7 +876,7 @@ PrefabInstance:
     - target: {fileID: 6388586733149884058, guid: 65874f933b355ef4abe0880191beee31,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6388586733149884058, guid: 65874f933b355ef4abe0880191beee31,
         type: 3}
@@ -4052,7 +4052,7 @@ PrefabInstance:
     - target: {fileID: 3200463193851972283, guid: 213dabfcdea0c274db7ea855f5a586fc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3200463193851972283, guid: 213dabfcdea0c274db7ea855f5a586fc,
         type: 3}
@@ -4062,7 +4062,7 @@ PrefabInstance:
     - target: {fileID: 3200463193851972283, guid: 213dabfcdea0c274db7ea855f5a586fc,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 3200463193851972283, guid: 213dabfcdea0c274db7ea855f5a586fc,
         type: 3}
@@ -4134,7 +4134,7 @@ MonoBehaviour:
     type: 3}
   obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 256
 --- !u!4 &1648752329
 Transform:
   m_ObjectHideFlags: 0
