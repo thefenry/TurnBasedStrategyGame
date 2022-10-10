@@ -10,5 +10,31 @@ public class Testing : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            //ShowNavigationPath();
+        }
+    }
+
+    /// <summary>
+    /// Shows a navigation path using the pathfinding algorithm
+    /// </summary>
+    private static void ShowNavigationPath()
+    {
+        GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+        GridPosition startGridPosition = new GridPosition(0, 0);
+
+        var gridPositions = Pathfinding.Instance.FindPath(startGridPosition, mouseGridPosition, out int pathLength);
+
+        if (gridPositions == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < gridPositions.Count - 1; i++)
+        {
+            Debug.DrawLine(LevelGrid.Instance.GetWorldPosition(gridPositions[i]),
+                LevelGrid.Instance.GetWorldPosition(gridPositions[i + 1]), Color.magenta, 10);
+        }
     }
 }

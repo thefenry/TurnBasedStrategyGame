@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -12,11 +13,7 @@ public class Unit : MonoBehaviour
 
     private int _actionPointsRemaining;
     private HealthSystem _healthSystem;
-
-    public MoveAction MoveAction { get; private set; }
-    public SpinAction SpinAction { get; private set; }
-    public ShootAction ShootAction { get; private set; }
-
+    
     public BaseAction[] AvailableActions { get; private set; }
 
     public static event EventHandler OnAnyActionPointsChanged;
@@ -25,10 +22,6 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-        MoveAction = GetComponent<MoveAction>();
-        SpinAction = GetComponent<SpinAction>();
-        ShootAction = GetComponent<ShootAction>();
-
         AvailableActions = GetComponents<BaseAction>();
 
         _healthSystem = GetComponent<HealthSystem>();
@@ -118,6 +111,11 @@ public class Unit : MonoBehaviour
         Destroy(gameObject);
 
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    public T GetAction<T>() where T : BaseAction
+    {
+        return AvailableActions.OfType<T>().FirstOrDefault();
     }
 
     public float GetCurrentHealth => _healthSystem.GetNormalizedHealth();

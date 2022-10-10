@@ -6,6 +6,7 @@ public class ShootAction : BaseAction
 {
     [SerializeField] private int maxShootDistance = 7;
     [SerializeField] private int damageAmount = 40;
+    [SerializeField] private LayerMask obstacleLayerMask;
 
     private State _currentState;
     private float _stateTimer;
@@ -118,7 +119,7 @@ public class ShootAction : BaseAction
     public List<GridPosition> GetValidActionGridPositions(GridPosition currentGridPosition)
     {
         var validGridPositions = new List<GridPosition>();
-        
+
         for (int x = -maxShootDistance; x <= maxShootDistance; x++)
         {
             for (int z = -maxShootDistance; z <= maxShootDistance; z++)
@@ -146,6 +147,17 @@ public class ShootAction : BaseAction
                     continue;
                 }
 
+                Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(currentGridPosition);
+                Vector3 shootDirection = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
+                var distanceToTarget = Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition());
+                float unitShoulderHeight = 1.7f;
+                if (Physics.Raycast(unitWorldPosition + Vector3.up * unitShoulderHeight, shootDirection,
+                        distanceToTarget, obstacleLayerMask))
+                {
+                    // Blocked by an obstacle
+                    continue;
+                }
+
                 validGridPositions.Add(testGridPosition);
             }
         }
@@ -161,7 +173,7 @@ public class ShootAction : BaseAction
         return new EnemyAIAction
         {
             GridPosition = gridPosition,
-            ActionValue = 100 + Mathf.RoundToInt((1- targetCurrentHealth) * 100) //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
+            ActionValue = 100 + Mathf.RoundToInt((1 - targetCurrentHealth) * 100) //THIS IS HOW MUCH THIS IS WORTH COMPARED TO OTHER ACTIONS. SHOULD NOT BE HARD CODED
         };
     }
 

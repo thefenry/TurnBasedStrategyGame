@@ -3,21 +3,16 @@ using UnityEngine;
 
 public class GridDebugObject : MonoBehaviour
 {
-    private GridObject _gridObject;
-    private TextMeshPro _textMeshPro;
+    private object _gridObject;
+    [SerializeField] private TextMeshPro textMeshPro;
 
-    private void Start()
-    {
-        _textMeshPro = GetComponentInChildren<TextMeshPro>();
-    }
-
-    public void SetGridObject(GridObject gridObject)
+    public virtual void SetGridObject(object gridObject)
     {
         _gridObject = gridObject;
     }
 
-    private void Update()
+    protected  virtual void Update()
     {
-        _textMeshPro.text = _gridObject.ToString();
+        textMeshPro.text = _gridObject.ToString();
     }
 }
